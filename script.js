@@ -13,10 +13,6 @@ const autorun = async () => {
   renderActors(actors.results);
 };
 
-const autorun2 = async () => { 
-   const actors = await  fetchActors();
- 
- };
 
 // Don't touch this function please
 const constructUrl = (path) => {
@@ -30,6 +26,12 @@ const movieDetails = async (movie) => {
   const movieRes = await fetchMovie(movie.id);
   renderMovie(movieRes);
 };
+
+const actorDetails = async (actor) => {
+  const actorRes = await fetchMovie(actor.id);
+  renderActor(actorRes);
+};
+
 
 // This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
 const fetchMovies = async () => {
@@ -108,8 +110,7 @@ const renderMovie = (movie) => {
             <li> <img id="actor-backdrop" src= movie.cast
     }></li>
             </ul>
-           <h3>Related Movies</h3>
-          <p id="releated-movies">${movie.page}</p>
+           
         
           
     
@@ -118,7 +119,7 @@ const renderMovie = (movie) => {
     `;
 };
 
-// actor rendering,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+// ____________________________________actor rendering___________________________-
 const renderActors = (actors) => {
   actors.map((actor) => {
     const actorDiv = document.createElement("div");
@@ -132,6 +133,33 @@ const renderActors = (actors) => {
     });
     CONTAINER.appendChild(actorDiv);
   });
+};
+
+const renderActor = (actor) => {
+  CONTAINER.innerHTML = `
+    <div class="row">
+        <div >
+        <img src=${PROFILE_BASE_URL + actor.profile_path}>
+        </div>
+        <div >
+            <h2 id="actor-id">${actor.id}</h2>
+            
+            <h2 id="actor-name">${actor.name}</h2>
+            <p ><Gender :</b> ${actor.gender
+            }</p>
+                   <p ><b>popularity:</b> ${actor.popularity
+            }</p>
+            
+
+        
+        </div>
+        </div>
+        
+          
+    
+    
+    
+    `;
 };
 
 document.addEventListener("DOMContentLoaded", autorun);
