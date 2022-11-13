@@ -11,10 +11,7 @@ const autorun = async () => {
   renderMovies(movies.results);
 };
 
-const autorun2 = async () => { 
-   const actors = await  fetchActors();
- 
- };
+
 
 // Don't touch this function please
 const constructUrl = (path) => {
@@ -26,7 +23,9 @@ const constructUrl = (path) => {
 // You may need to add to this function, definitely don't delete it.
 const movieDetails = async (movie) => {
   const movieRes = await fetchMovie(movie.id);
+  const movieReleate = await fetchReleatedMovies(movie.id);
   renderMovie(movieRes);
+  renderReleatedMovies( movieReleate)
 };
 
 // This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
@@ -43,14 +42,14 @@ const fetchMovie = async (movieId) => {
   return res.json();
 };
 
-// adding function to fetch actors in actor list page
-const fetchActors = async () => {
-  const url = constructUrl(`movie/now_playing`);
+
+//___________________________fetchReleatedMovies____________
+const fetchReleatedMovies = async (id) => {
+  const url = constructUrl(`movie/${id}/similar`);
   const res = await fetch(url);
+  //console.log(res.json())
   return res.json();
 };
-
-
 
 //..........................................style.........................................................
 
@@ -108,14 +107,16 @@ const renderMovie = (movie) => {
     }></li>
             </ul>
 
-           <h3>Related Movies</h3>
-          <p id="releated-movies">${movie.page}</p>
-        
+           <h3>Related Movies</h3> `;
+
+          
+         const releatedMovieList = document.createElement("releated")
+         releatedMovieList.append(renderReleatedMovies(releated))
           
     
     
     
-    `;
+   
 };
 
 // actor rendering,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -133,4 +134,18 @@ const renderActors = (actors) => {
   });
 };
 
+// actor rendering,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+const renderReleatedMovies = (relates) => {
+  relates.similar.slice(0, 5).map((relate) => {
+    const actorDiv = document.createElement("ul");
+    actorDiv.innerHTML = `
+        <li>${actor.name}</li>
+        <img src="${BACKDROP_BASE_URL + relate.backdrop_path}" alt="${
+          relate.title
+        } poster">`
+    actorDiv.addEventListener("click", () => {displaySingleActorPage();});
+    CONTAINER.appendChild(actorDiv);
+  });
+
+}
 document.addEventListener("DOMContentLoaded", autorun);
