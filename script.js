@@ -4,11 +4,13 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const PROFILE_BASE_URL = "http://image.tmdb.org/t/p/w185";
 const BACKDROP_BASE_URL = "http://image.tmdb.org/t/p/w780";
 const CONTAINER = document.querySelector(".container");
-
+const CONTAINER2 = document.querySelector(".actorPagecontainer");
 // Don't touch this function please
 const autorun = async () => {
   const movies = await fetchMovies();
+  const actors = await fetchActors();
   renderMovies(movies.results);
+  renderActors(actors.results);
 };
 
 // Don't touch this function please
@@ -39,9 +41,20 @@ const fetchMovie = async (movieId) => {
 };
 
 
+//_________________________________________  Actors fetching    __________________________________
+const fetchActors = async () => {
+  const url = constructUrl(`person/popular`);
+  console.log(url);
+  const res = await fetch(url);
+  return res.json();
+  // .log(res.json())   wont work here 
+
+};
 
 
-//..........................................style.........................................................
+
+
+//..........................................Rendering.........................................................
 
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
@@ -96,6 +109,22 @@ const renderMovie = (movie) => {
     </div>
     
     `;
+};
+
+
+const renderActors = (actors) => {
+  actors.map((actor) => {
+    const actorDiv = document.createElement("div");
+    // const actorDiv2 = document.getElementById("actorPageContainer");
+    actorDiv.innerHTML = `
+          <img src="${PROFILE_BASE_URL + actor.profile_path}" alt="${actor.name
+      } poster">
+          <h3>${actor.name}</h3>`;
+    actorDiv.addEventListener("click", () => {
+      actorDetails(actor);
+    });
+    CONTAINER.appendChild(actorDiv);
+  });
 };
 
 document.addEventListener("DOMContentLoaded", autorun);
