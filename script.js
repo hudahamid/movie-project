@@ -10,7 +10,12 @@ const autorun = async () => {
  const movies = await fetchMovies();
   renderMovies(movies.results);
 };
-
+// This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
+const fetchMovies = async () => {
+  const url = constructUrl(`movie/now_playing`);
+  const res = await fetch(url);
+  return res.json();
+};
 
 
 // Don't touch this function please
@@ -19,39 +24,7 @@ const constructUrl = (path) => {
     "NTQyMDAzOTE4NzY5ZGY1MDA4M2ExM2M0MTViYmM2MDI="
   )}`;
 };
-
-// You may need to add to this function, definitely don't delete it.
-const movieDetails = async (movie) => {
-  const movieRes = await fetchMovie(movie.id);
-  const movieReleate = await fetchReleatedMovies(movie.id);
-  renderMovie(movieRes);
-  renderReleatedMovies( movieReleate)
-};
-
-// This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
-const fetchMovies = async () => {
-  const url = constructUrl(`movie/now_playing`);
-  const res = await fetch(url);
-  return res.json();
-};
-
-// Don't touch this function please. This function is to fetch one movie.
-const fetchMovie = async (movieId) => {
-  const url = constructUrl(`movie/${movieId}`);
-  const res = await fetch(url);
-  return res.json();
-};
-
-
-//___________________________fetchReleatedMovies____________
-const fetchReleatedMovies = async (id) => {
-  const url = constructUrl(`movie/${id}/similar`);
-  const res = await fetch(url);
-  //console.log(res.json())
-  return res.json();
-};
-
-//..........................................style.........................................................
+//..........................................renderMovies.........................................................
 
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
@@ -68,8 +41,49 @@ const renderMovies = (movies) => {
     CONTAINER.appendChild(movieDiv);
   });
 };
+// main page finished....................................................................................................
+
+
+
+
+
+// You may need to add to this function, definitely don't delete it.
+const movieDetails = async (movie) => {
+  const movieRes = await fetchMovie(movie.id);
+  const actorRes = await fetchActors(movie.id);
+  const movieReleate = await fetchReleatedMovies(movie.id);
+  const movieTrailer = await fetchMovie(movie.id+"/videos");
+  
+ //renderReleatedMovies( movieReleate)
+    renderMovie(movieRes,actorRes,movieTrailer.results);
+};
+
+
+// **********  movie  info********** Don't touch this function please. This function is to fetch one movie.
+const fetchMovie = async (movieId) => {
+  const url = constructUrl(`movie/${movieId}`);
+  const res = await fetch(url);
+  return res.json();
+};
+// **********  movie  cast**********
+const fetchActors = async (id) => {
+  const url = constructUrl(`movie/${id}/credits`);
+  const res = await fetch(url);
+  //console.log(res.json())
+  return res.json();
+};
+
+//___________________________fetchReleatedMovies____________
+const fetchReleatedMovies = async (id) => {
+  const url = constructUrl(`movie/${id}/similar`);
+  const res = await fetch(url);
+  //console.log(res.json())
+  return res.json();
+};
+
 
 // You'll need to play with this function in order to add features and enhance the style.
+//_______________________________________renderMovie_____________________________________________
 const renderMovie = (movie) => {
   CONTAINER.innerHTML = `
     <div class="row">
@@ -109,9 +123,12 @@ const renderMovie = (movie) => {
 
            <h3>Related Movies</h3> `;
 
+
+           const actorList = document.getElementById("actors")
+    actorList.append(renderActors(actors))
           
-         const releatedMovieList = document.createElement("releated")
-         releatedMovieList.append(renderReleatedMovies(releated))
+         const releatedMovieList = document.getElementById("similar")
+         releatedMovieList.append(renderReleatedMovies(similar))
           
     
     
@@ -119,33 +136,32 @@ const renderMovie = (movie) => {
    
 };
 
-// actor rendering,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-const renderActors = (actors) => {
-  actors.map((actor) => {
-    const actorDiv = document.createElement("div");
-    actorDiv.innerHTML = `
-          <img src="${PROFILE_BASE_URL + actor.profile_path}" alt="${actor.name
-      } poster">
-          <h3>${actor.name}</h3>`;
-    actorDiv.addEventListener("click", () => {
-      actorDetails(actor);
-    });
-    CONTAINER.appendChild(actorDiv);
-  });
-};
-
-// actor rendering,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+// ___________________________________________________actor rendering_____________________________________________________,
+const renderActors = (actors) =>  {
+  actors.cast.slice(0, 5).map((actor) => {
+  const actorDiv = document.createElement("ul");
+  actorDiv.innerHTML = `
+      <li>${actor.name}</li>
+      <img src="${BACKDROP_BASE_URL + actor.profile_path}" alt="${actor.name} poster" style="width:48px ">`;
+  actorDiv.addEventListener("click", () => {displaySingleActorPage();});
+  CONTAINER.appendChild(actorDiv);
+});
+}
+//____________________________________ renderReleatedMovies _________________________________________
 const renderReleatedMovies = (relates) => {
   relates.similar.slice(0, 5).map((relate) => {
-    const actorDiv = document.createElement("ul");
-    actorDiv.innerHTML = `
+    const relateDiv = document.createElement("ul");
+    relateDiv.innerHTML = `
         <li>${actor.name}</li>
         <img src="${BACKDROP_BASE_URL + relate.backdrop_path}" alt="${
           relate.title
         } poster">`
-    actorDiv.addEventListener("click", () => {displaySingleActorPage();});
-    CONTAINER.appendChild(actorDiv);
+        relateDiv.addEventListener("click", () => {
+         // displaySingleActorPage();
+        });
+    CONTAINER.appendChild(relateDiv);
   });
 
+  //____________________________________ renderTrailer _________________________________
 }
 document.addEventListener("DOMContentLoaded", autorun);
