@@ -8,9 +8,9 @@ const CONTAINER = document.querySelector(".container");
 // Don't touch this function please
 const autorun = async () => {
  const movies = await fetchMovies();
- const actors = await fetchActors();
+ //const actors = await fetchActors();
   renderMovies(movies.results);
-  renderActors(actors.results);
+ // renderActors(actors);
 };
 
 
@@ -25,11 +25,6 @@ const constructUrl = (path) => {
 const movieDetails = async (movie) => {
   const movieRes = await fetchMovie(movie.id);
   renderMovie(movieRes);
-};
-
-const actorDetails = async (actor) => {
-  const actorRes = await fetchMovie(actor.id);
-  renderActor(actorRes);
 };
 
 
@@ -47,15 +42,6 @@ const fetchMovie = async (movieId) => {
   return res.json();
 };
 
-// adding function to fetch actors in actor list page
-const fetchActors = async () => {
-  const url = constructUrl(`person/popular`);
-  console.log(url);
-  const res = await fetch(url);
-  return res.json();
-  // .log(res.json())   wont work here 
-
-};
 
 
 
@@ -95,8 +81,15 @@ const renderMovie = (movie) => {
     }</p>
     
             <p id="movie-runtime"><b>movie rating</b> ${movie.vote_average}</p>
-             <p id="movie-runtime"><b>movie production company name and logo</b> ${movie.production_companies[3]
-    } </p>
+           
+   
+
+    <p id="production-company"><b>Production Company:</b> ${
+      movie.production_companies[0].name
+    }</p>
+    <img id="production-company-logo" src=${
+      BACKDROP_BASE_URL + movie.production_companies[0].logo_path
+    }>
               <p id="movie-runtime"><b>director name:</b> ${movie.runtime} Minutes</p>
            
     
@@ -111,49 +104,6 @@ const renderMovie = (movie) => {
     }></li>
             </ul>
            
-        
-          
-    
-    
-    
-    `;
-};
-
-// ____________________________________actor rendering___________________________-
-const renderActors = (actors) => {
-  actors.map((actor) => {
-    const actorDiv = document.createElement("div");
-    // const actorDiv2 = document.getElementById("actorPageContainer");
-    actorDiv.innerHTML = `
-          <img src="${PROFILE_BASE_URL + actor.profile_path}" alt="${actor.name
-      } poster">
-          <h3>${actor.name}</h3>`;
-    actorDiv.addEventListener("click", () => {
-      actorDetails(actor);
-    });
-    CONTAINER.appendChild(actorDiv);
-  });
-};
-
-const renderActor = (actor) => {
-  CONTAINER.innerHTML = `
-    <div class="row">
-        <div >
-        <img src=${PROFILE_BASE_URL + actor.profile_path}>
-        </div>
-        <div >
-            <h2 id="actor-id">${actor.id}</h2>
-            
-            <h2 id="actor-name">${actor.name}</h2>
-            <p ><Gender :</b> ${actor.gender
-            }</p>
-                   <p ><b>popularity:</b> ${actor.popularity
-            }</p>
-            
-
-        
-        </div>
-        </div>
         
           
     
